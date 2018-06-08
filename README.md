@@ -1,13 +1,13 @@
-#Big-Data-Computing
+# Big-Data-Computing
 Here i push my homeworks about Big Data Computing.
 I really want to thanks Edoardo and Edoardo Borsato, cause the help me out 
 a lot and they always come with some new tips and a faster/efficent code.
 
 
-##Homework 1
+## Homework 1
 The purpose of this first homework is to set up the environment for developing Spark code on your machine and to get acquainted with the principles of functional programming, on which MapReduce and Spark are based.
 
-Machine setup for Java users
+### Machine setup for Java users
 Before doing any work, you should setup your machine through the following steps.
 First of all, you need to have the Java Development Kit (JDK) version 8 installed on your machine. If the command
 javac -version
@@ -18,7 +18,7 @@ Head over to the download page of Intellij Idea (Community edition) and install 
 After installation is completed, you must configure Intellij for a first run. Launch Intellij. In first startup screen choose not to import any settings. In the second one (about user interface theme) choose "Skip Remaining and Set Defaults". Then, in the third screen select Import Project: use the file selection dialog that pops up to select the file build.gradle file contained in the directory you downloaded.
 
 
-Preliminaries
+### Preliminaries
 One of the core ideas of functional programming is that functions can be arguments to other functions. For instance, a function implementing a sorting algorithm may take as a parameter the comparison function along with the data to be sorted.
 Java 8 introduced support for this style of programming by adding new syntax for specifying so-called anonymous functions, also called lambdas. This syntax allows to write functions directly in the argument list of other functions. The syntax for specifying a function is the following:
 
