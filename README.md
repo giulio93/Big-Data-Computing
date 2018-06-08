@@ -103,9 +103,7 @@ using the reduce method;
 using the min method of the JavaRDD class passing to it a comparator as explained here.
 Compute and print another statistics of your choice on the data in dNumbers. Make sure that you use at least one more method chosen among those of the JavaRDD interface. Have a look at the official Spark Java API and, for details about some methods, here.
 Add short but explicative comments to your code and when you print a value print also a short description of what that value is. Return the file GxxHM1.java with your program by mail to bdc-course@dei.unipd.it
-Assignment (Python users)
-You have to learn how to use the Spark API with Python. Refer to the official Apache Spark's site and, in particular, to the Spark Overview and the Quick Start pages. Also, look at the "Note for Python users" on this page, at the end of the Machine setup section.
-By the deadline, you must return the following files:
+
 
 
 ## Homework 2: MapReduce with Spark
@@ -168,7 +166,7 @@ Now, when your program reaches the input statement, open a browser and visit loc
 ## MapReduce with Spark
 Key-value pairs. In Java, a dataset of key-value pairs with keys of type K and values of type V is implemented through a JavaPairRDD<K,V> object, which is an RDD whose elements are instances of the class Tuple2<K,V>.
 
-For Python users: a dataset of key-value pairs can be implemented as a simple RDD whose elements are key-value pairs. All transformations can be applied, but some transformations require that the elements of the RDD be key-value pairs.
+
 
 Map phase. In order to implement a map phase where each key-value pair, individually, is transformed into 0, 1 or more key-value pairs, the following methods can be invoked from a JavaPairRDD<K,V> object X:
 
@@ -180,7 +178,7 @@ Reduce phase. In order to implement a reduce phase where each set of key-value p
 
 groupByKey. For each key k occurring in X, it creates a key-value pair (k,w) where w is an Iterable<V> containing all values of the key-value pairs with key k in X. Hence, X.groupByKey() returns a JavaPairRDD<K,Iterable<V> object. The reduce phase of MapReduce can be implemented by applying flatMapToPair after groupByKey.
 reduceByKey. For each key k occurring in X, it creates a key-value pair (k,v) where v is obtained by applying an commutative and associative function f passed as a parameter (e.g., (x,y)->x+y) to all values of the key-value pairs with key k in X. Hence, X.reduceByKey(f) returns a JavaPairRDD<K,V> object.
-For Python users: all of the above methods have a Python equivalent with the same name, except for mapToPair and flatMapToPair which, in Python, become map and flatMap.
+
 
 For more details on the classes and the methods mentioned above refer to the official RDD Programming guide and, for Java users, to the JavaPairRDD api and to this guide.
 
@@ -215,7 +213,7 @@ A few observations are needed.
 In the map phase, which is implemented through the flatMapToPair method, the method split of String is used to split a document into its constituent words.
 The function passed as a parameter to mapValues takes as input (it) the value of a key-value pair in the RDD returned by groupByKey. In this example, it is a collection of type Iterable<Long> (in fact, it will be a sequence of 1's). The for (long c : it) cycle is an example of the Java for-each loop, which iterates over all values contained in the collection it, successively assigned to variable c.
 Assignment
-Create a program GxxHM2.java (for Java users) or GxxHM2.py (for Python users), where xx is your two-digit group number, which receives in input a collection of documents, represented as a text file (one line per document) whose name is provided on the command line, and does the following things:
+Create a program GxxHM2.java (for Java users)  where xx is your two-digit group number, which receives in input a collection of documents, represented as a text file (one line per document) whose name is provided on the command line, and does the following things:
 
 Runs 3 versions of MapReduce word count and returns their individual running times, carefully measured:
 a version that implements the Improved Word count 1 described in class.
@@ -259,4 +257,84 @@ Runs kcenter(P,k) printing its running time.
 Runs kmeansPP(P,WP,k) with all weights in WP equal to 1, to obtain a set of k centers C, and then runs kmeansObj(P,C) printing the returned value
 Runs kcenter(P,k1) to obtain a set of k1 centers X; then runs kmeansPP(X,WX,k) to obtain a set of k centers C, and finally runs kmeansObj(P,C) printing the returned value. Here the idea is to test whether k1>k centers extracted with the kcenter primitive can provide a good coreset on which running kmeans++. Of course, the larger k1 and the better the set of centers computed by kmeansPP(X,WX,k). But you can also play with the weights W(X). The easiest thing to do is to set all weights equal to 1. But if you feel adventurous, you can explore other avenues.
 
+
+#Homework 4: Diversity Maximization on a Cloud
+This homework will show how a coreset-based approach enables an effective and efficient solution to the diversity maximization problem, an important combinatorial optimization problem whose best polynomial-time approximation algorithm is impractically slow for large instances.
+
+## Diversity Maximization
+Given a set P of N points in a metric space and an integer k < N, diversity maximization (remote-clique variant) requires to find k distinct points of P so to maximize their average distance (i.e., the sum of their k*(k-1)/2 pairwise distances divided by k*(k-1)/2). Diversity maximization is an important primitive for big-data application domains such as aggregator websites, web search, recommendation systems, but it is NP-hard.
+
+### 2-approximate sequential algorithm: for floor(k/2) times, 
+select the two unselected points with maximum distance. If k is odd, add at the end an arbitrary unselected point. For datasets of millions/billions points, the algorithm, whose complexity is quadratic in N, becomes impractically slow.
+4-approximation coreset-based MapReduce algorithm: Partition P into L subsets and extract k points from each subset using the Farthest-First Traversal algorithm. Compute the final solution by running the 2-approximate sequential algorithm (in one reducer) on the coreset of L*k points extracted from the L subsets.
+Using CloudVeneto
+In this homework you must develop a Spark implementation of the MapReduce Diversity Maximization algorithm described above, which you will run on CloudVeneto, a cloud infrastructure at UNIPD. On the cloud you have access to a cluster of 10 machines, each equipped with 8 cores and 16 GB of RAM. Of these 10 machines, 9 are devoted to execute parallel Spark tasks, and 1, called frontend, is responsible of coordinating jobs and managing resources. You will access the frontend, from which you will run your jobs.
+
+Access to the frontend
+Access to the frontend is through the SSH protocol.
+
+# Linux and MacOS users. You must use the native SSH client. Open a terminal window and type the following command
+ssh -p 2222 IPADRESS
+where groupXX is your group's name. You will be asked a password.
+
+# Windows users. Since Windows lacks a native SSH client, you will have to install Putty. Once installed, execute it and the following GUI shows up:
+_images/putty.png
+Fill the boxes as shown in the image above, replacing groupXX with your own group’s name. A terminal will open asking for your password.
+
+# All users. After typing the password you will be connected to the frontend. Initial passwords will be communicated separately and must be changed immediately using the passwd command.
+Warning
+The CloudVeneto cluster can be accessed only from the unipd network. In order to access it from home, you must first do a remote login to some machine connected to the unipd network. For example, if you have an account at DEI, you can remote login to login.dei.unipd.it, and from there you can access the cluster using SSH (as explained in the instructions for Linux or MacOS systems). Contact us if you experience any problem accessing the cluster.
+
+## Datasets
+For this homework you will use the same type of data used for Homework 3, namely sets of points in 50-dimensional Euclidean space, which are vectorized representations of Wikipedia pages.
+
+For the purpose of testing your code on your PC, you can use the sample of vectors provided for Homework 3. Instead, for running your code on the CloudVeneto cluster you have read-only access to datasets with varying sizes (from about 500000 to about 5000000 points), which are already uploaded and hosted in the HDFS (Hadoop Distributed File System). On the cluster there are two co-existing file hierarchies: the Operating System one, which is used during normal operation, and the HDFS, which stores data to be used as input for Spark jobs.
+
+You will find all datasets in the read-only directory /data. They are bzip2-compressed (extension bz2) and can be read by the Spark textFile command. To interact with HDFS there is a dedicated command, unsurprisingly called hdfs, whose synopsis is given here. To get a list of the available datasets use the following command:
+
+hdfs dfs -ls /data.
+They are in the format vectors-D-N.txt.bz2, where D is the dimension of the vectors and N is (approximately) the number of vectors. For instance, the dataset vectors-50-1000000.txt.bz2 contains about 1 million 50-dimensional vectors. Dataset vectors-50-all.txt.bz2 contains all (about 5000000) pages.
+Uploading and running jobs
+TO UPLOAD YOUR JOB:
+
+Java users. You must pack your code in a jar file suitable for execution on the cluster. In Intellij IDEA, open the gradle panel by hovering over the menu in the bottom-left corner (indicated by the red arrow in the image below)
+_images/shadow-jar-1a.png
+Then, click on shadowjar which will create a jar file bdc1718-all.jar in the directory bdc1718/build/libs. The jar file contains your code and all of its dependencies.
+
+_images/shadow-jar-2.png
+Finally, to upload the jar file to your account on the cluster, open the embedded terminal (again by hovering over the menu in the bottom-left corner)
+
+_images/shadow-jar-3.png
+
+The terminal will open in the root directory of the project. On Linux and MacOS, run the scp command as shown in the image below, adjusting the group's ID and the name of the jar file to your needs.
+
+_images/scp.png
+If you are on windows, replace scp with pscp (which was installed along with Putty), and use \ instead of / in file paths.
+
+
+Java users. Suppose that on the cluster's frontend you uploaded a jar file named bdc1718-all.jar which collects all files found in directory it.unipd.dei.bdc1718, including your Homework 4 program GxxHM4.java containing class GxxHM4. In order to run this program, login to the frontend (as explained before) and type the following command
+spark-submit --total-executor-cores X --executor-cores Y --class it.unipd.dei.bdc1718.GxxHM4 bdc1718-all.jar argument-list 
+
+spark-submit --total-executor-cores X --executor-cores Y GxxHM4.py argument-list 
+Both Java and Python users. Parameter X sets the total number of cores used by the application. The maximum value is 72. Parameter Y sets the number of cores used for each executor. The maximum value is 8. The argument list depends on the program that you are running. To pass one of the preloaded files as an argument to the program specify the path /data/filename (e.g., /data/vectors-50-1000000.txt.bz2.
+
+## Assignment (Java users)
+For this homework you need to develop the following two methods.
+
+A method runMapReduce(pointsrdd,k,numBlocks) that receives in input a set of points represented by a JavaRDD<Vector> pointsrdd and two integers k and numBlocks, and does the following things: (a) partitions pointsrdd into numBlocks subsets; (b) extracts k points from each subset by running the sequential Farthest-First Traversal algorithm implemented for Homework 3; (c) gathers the numBlocks*k points extracted into an ArrayList<Vector> coreset; (d) returns an ArrayList<Vector> object with k points determined by running the sequential max-diversity algorithm with input coreset and k. The code of the sequential algorithm can be downloaded here.
+A method measure(pointslist) that receives in input a set of points represented by an ArrayList<Vector> pointslist and returns a double which is the average distance between all points in pointslist (i.e., the sum of all pairwise distances divided by the number of distinct pairs).
+Then, create a program GxxHM4.java, where xx is your two-digit group number, which receives in input a set of points in Euclidean space (provided as a text file) and two integers k and numBlocks. The program incorporates the methods developed above and does the following:
+
+Reads the input points into a JavaRDD<Vector> by calling:
+sc.textFile(datafile).map(f).repartition(numBlocks).cache();
+
+where datafile is the path to the input text file and f is a function that creates an instance of Vector from a string representing its coordinates (a similar transformation was used already in Homework 3, so copy it from there).
+
+Determines the solution of the max-diversity problem by calling runMapReduce(pointsrdd,k,numBlocks) (where inputrdd is the JavaRDD<Vector> containing the input points) and prints
+The average distance among the solution points.
+The time taken by the coreset construction.
+The time taken by the computation of the final solution (through the sequential algorithm) on the coreset.
+After your program has been debugged and tuned up on your PC, test the program on the CloudVeneto cluster trying different input sizes (using the datasets available there), different values of k and numBlocks and different numbers of executors and cores. Create a 1-page pdf file GxxHM4.pdf, summarizing the results of your tests.
+
+Return both GxxHM4.java and GxxHM4.pdf by mail to bdc-course@dei.unipd.it
 
