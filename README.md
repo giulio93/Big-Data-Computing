@@ -225,4 +225,38 @@ Try to make each version as fast as possible. You can test it on the text-sample
 Asks the user to input an integer k and returns the k most frequent words (i.e., those with largest counts), with ties broken arbitrarily.
 Add short but explicative comments to your code and when you print a value print also a short description of what that value is.
 
-Return the file with your program by mail to bdc-course@dei.unipd.it
+
+# Homework 3: k-center vs k-means++
+The third homework pursues the following objectives: (1) develop and efficient sequential implementation of the Farthest-First Traversal algorithm for the k-center problem (which will turn out useful also for the last homework); (2) check whether k-means++, which provides a good initialization for the Lloyd's algorithm, can be executed on a coreset extracted through k-center, rather than on the whole dataset, without sacrificing the quality of its output too much. For reviewing the algorithms look at the slides on Clustering, Part 1 (slides 30-31) and (Part 2) (slides 14-16).
+
+## Datasets
+For this homework we will work on points in Euclidean space represented by vectors of reals (double, in Java). Download this zip file containing 4 datasets of various sizes which you can use for testing your program. The datasets are made of points in 50-dimension Euclidean space, which are vectorized representations of pages sampled from a recent dump of Wikipedia. The datasets are:
+
+vecs-50-10000.txt: 9960 points
+vecs-50-50000.txt: 50047 points
+vecs-50-100000.txt: 99670 points
+vecs-50-500000.txt: 499950 points
+In Spark, the points can be represented as instances of the class org.apache.spark.mllib.linalg.Vector and can be manipulated through static methods offered by the class org.apache.spark.mllib.linalg.Vectors (these classes are available both for Java and Python). For example, method Vectors.dense(x) transforms an array x of double into an instance of class Vector, while method Vectors.sqdist(a,b) computes the squared L2-distance between two instances a and b of class Vector. For Java users, you can download the class InputOutput, where you find a method InputOutput.readVectorsSeq that, given in input the name (or path) of a text file containing points in Euclidean space (one point per line with coordinates separated by space, as in the files above) transforms it into a java.util.ArrayList<Vector>.
+
+## Warning
+In Spark, there is also a class Vector in the org.apache.spark.ml package, which is functionally equivalent, but incompatible with org.apache.spark.mllib.linalg.Vector. This unfortunate difference is due to the history of Spark's API. For the homeworks we will use classes from the org.apache.spark.mllib package.
+
+## Assignment (Java users)
+For this homework you need not RDDs! You must develop 3 methods.
+
+A method kcenter(P,k) that receives in input a set of points P and an integer k, and returns the set C of k centers computed by the Farthest-First Traversal algorithm. Both P and C must be represented as instances of java.util.ArrayList<Vector>.
+A method kmeansPP(P,WP,k) that receives in input a set of points P, a set of weigths WP for P, and an integer k, and returns a set C of k centers computed with a weighted variant of the kmeans++ algorithm where, in each iteration, the probability for a non-center point p of being chosen as next center is
+w_p*(d_p)^2/(sum_{q non center} w_q*(d_q)^2)
+
+where d_p is the distance of p from the closest among the already selected centers and w_p is the weight of p. WP must be represented as instance of java.util.ArrayList<Long>, where the i-th element of WP is the weight of the i-th element of P.
+
+A method kmeansObj(P,C) that receives in input a set of points P and a set of centers C, and returns the average squared distance of a point of P from its closest center (i.e., the kmeans objective function for P with centers C, divided by the number of points of P).
+Make sure that kcenter(P,k) and kmeansPP(P,WP,k) run in time O(|P|*k)
+
+Finally, you must create a program GxxHM3.java, where xx is your two-digit group number, which receives in input a set P of points in Euclidean space (provided as a text file as the above datasets), and 2 integers k, k1, with k < k1. The program incorporates the methods developed above and does the following:
+
+Runs kcenter(P,k) printing its running time.
+Runs kmeansPP(P,WP,k) with all weights in WP equal to 1, to obtain a set of k centers C, and then runs kmeansObj(P,C) printing the returned value
+Runs kcenter(P,k1) to obtain a set of k1 centers X; then runs kmeansPP(X,WX,k) to obtain a set of k centers C, and finally runs kmeansObj(P,C) printing the returned value. Here the idea is to test whether k1>k centers extracted with the kcenter primitive can provide a good coreset on which running kmeans++. Of course, the larger k1 and the better the set of centers computed by kmeansPP(X,WX,k). But you can also play with the weights W(X). The easiest thing to do is to set all weights equal to 1. But if you feel adventurous, you can explore other avenues.
+
+
