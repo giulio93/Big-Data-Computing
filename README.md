@@ -87,13 +87,13 @@ These are not all of the methods available to transform and collect data in Spar
 
 Note that the methods of JavaRDD that we saw are all functional in nature (well, except count and collect): they accept another function as a parameter to know what to do with elements.
 
-##Variable names
+## Variable names
 
 In the templates that we provide, we tend to use variable names with one-letter prefixes to distinguish variables representing local data and RDD data. Local data will be prefixed by l (e.g. lName) and distributed data by d (e.g. dName).
 
 Now, open the file src/main/java/it/unipd/dei/bdc1718/FirstHomework.java in the project template. It contains: some setup code (most of which will be explained in the next homework); the reading of a file of doubles (dataset.txt) into a JavaRDD called dNumbers; and a short code that computes and prints the sum of the squares of the doubles. Run the program and check the result at the bottom of the Intellij window, which refers to the sample dataset.txt file provided together with the program. You can use FirstHomework.java as a template for the homework.
 
-##Assignment (Java users)
+## Assignment (Java users)
 
 After downloading the directory bdc1718 and setting up the machine create a Java program GxxHM1.java, where xx is two-digit group number, which does the following things:
 Read an input a file dataset.txt of doubles into a JavaRDD dNumbers (as in the template FirstHomework.java)
