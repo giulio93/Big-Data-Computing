@@ -16,7 +16,7 @@
 
 
 ## sul cluster veneto
-### NB: non ho idea del perchè il coreset creation time a volte salga a volte scenda. mentre noto un certo senso nell'aumentare/diminuire della differenza tra solution computation e corset construction.
+
 
 | X   | Y   | K    | numB | File                      | CoreSet Construction | Solution Computation | Avereage Distance |
 | --- | --- | ---- | ---- | ------------------------- | -------------------- | -------------------- | ----------------- |
@@ -83,7 +83,6 @@
 
 all'aumentare di k giustamente avg dist cala perchè prendo più punti. e anche calcolare la soluzione finale impiega di più in quanto il coreset ha dimensione maggiore.
 
-Ma perchè il coreset ci mette meno ad essere costruito??????WTF(alla fine non sto applicando vari kcenter alg, in cui chiedo però di trovatre più risultati??)
 
 | X           | Y   | K    | numB | File                       | CoreSet Construction | Solution Computation | Avereage Distance |
 | ----------- | --- | ---- | ---- | -------------------------- | -------------------- | -------------------- | ----------------- |
@@ -130,7 +129,7 @@ Trival
 
 ### Variare di X (numero di macchine)
 
-ha senso mettere x < y????? (mi pare che il cluster si incazzi un po'XD)
+
 sembra che il numero di macchine garantisca un progressivo miglioramento in entrambi i tempi, fino a che credo, non si saturi la necessità. Per esempio se avessi scelto 
 x e numB  1000, avrei notato una differenza anche tra 32 E 16. Ma se lo avessi fatto, starei ancora testando). E anzi probabilmente sovraddosare le macchine rallenta leggermente il processo come si vede dall' ultimo caso.
 
@@ -188,7 +187,7 @@ NB: usare un minor numero di core per macchina(Y) incrementa la velocità di sol
 
 all'aumentare di k giustamente avg dist cala perchè prendo più punti. e anche calcolare la soluzione finale impiega di più in quanto il coreset ha dimensione maggiore.
 
-Ma perchè il coreset ci mette meno ad essere costruito??????WTF(alla fine non sto applicando vari kcenter alg, in cui chiedo però di trovatre più risultati??)
+
 
 | X   | Y   | K   | numB | File                       | CoreSet Construction | Solution Computation | Avereage Distance |
 | --- | --- | --- | ---- | -------------------------- | -------------------- | -------------------- | ----------------- |
@@ -236,11 +235,10 @@ Trival
 
 ### Variare di X (numero di core ttali)****
 
-ha senso mettere x < y????? (mi pare che il cluster si incazzi un po'XD)
+
 sembra che il numero di macchine garantisca un progressivo miglioramento in entrambi i tempi, fino a che credo, non si saturi la necessità. Per esempio se avessi scelto 
 x e numB  1000, avrei notato una differenza anche tra 32 E 16. Ma se lo avessi fatto, starei ancora testando). E anzi probabilmente sovraddosare le macchine rallenta leggermente il processo come si vede dall' ultimo caso.
 
-*** TESTARE SE CON 100 100 CAMBIA LA STORIA, PERCHè MAGARI IL DISPATCHER CI PENALIZZA SOTTO CERTE DIMENSIONI, MA POI DIVIENE INDISPENSABILE.
 | X   | Y   | K   | numB | File                       | CoreSet Construction | Solution Computation | Avereage Distance |
 | --- | --- | --- | ---- | -------------------------- | -------------------- | -------------------- | ----------------- |
 | 2   | 2   | 50  | 60   | vectors-50-1000000.txt.bz2 | 79478                | 87217                | 8.62              |
